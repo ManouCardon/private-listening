@@ -1,6 +1,7 @@
 export async function onRequest(context) {
 
     const cookie = context.request.headers.get("Cookie") || "";
+    let error = "";
 
     if (cookie.includes("lr_session=authenticated")) {
         return context.next();
@@ -13,16 +14,17 @@ export async function onRequest(context) {
 
         if (password === context.env.PASSWORD) {
 
-            return new Response(null, {
-                status: 302,
-                headers: {
-                    "Location": "/",
-                    "Set-Cookie": "lr_session=authenticated; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800"
-                }
-            });
-
+    return new Response(null, {
+        status: 302,
+        headers: {
+            "Location": "/",
+            "Set-Cookie": "lr_session=authenticated; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800"
         }
+    });
 
+}
+
+error = "❌ Het ingevoerde wachtwoord is niet juist.";
     }
 
     return new Response(`
@@ -91,6 +93,8 @@ export async function onRequest(context) {
 
 <p>Voer het wachtwoord in.</p>
 
+${error ? `<p style="color:#ff6b6b;margin-top:16px;margin-bottom:0;font-size:14px;">${error}</p>` : ""}
+
 <form method="POST">
 
 <input
@@ -99,14 +103,15 @@ export async function onRequest(context) {
     placeholder="Wachtwoord"
     autocomplete="current-password"
     autofocus
+    spellcheck="false"
     required
 >
 
-<button>
-Login
+<button type="submit">
+    Login
 </button>
 
-</form>
+<form method="POST" action="/">
 
 </div>
 
