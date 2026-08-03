@@ -1,5 +1,31 @@
 export async function onRequest(context) {
-  return new Response(`
+
+    const cookie = context.request.headers.get("Cookie") || "";
+
+    if (cookie.includes("lr_session=authenticated")) {
+        return context.next();
+    }
+
+    if (context.request.method === "POST") {
+
+        const form = await context.request.formData();
+        const password = form.get("password");
+
+        if (password === context.env.PASSWORD) {
+
+            return new Response(null, {
+                status: 302,
+                headers: {
+                    "Location": "/",
+                    "Set-Cookie": "lr_session=authenticated; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800"
+                }
+            });
+
+        }
+
+    }
+
+    return new Response(`
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -68,13 +94,16 @@ export async function onRequest(context) {
 <form method="POST">
 
 <input
-type="password"
-name="password"
-required
+    type="password"
+    name="password"
+    placeholder="Wachtwoord"
+    autocomplete="current-password"
+    autofocus
+    required
 >
 
 <button>
-Verder
+Login
 </button>
 
 </form>
@@ -89,4 +118,5 @@ Verder
         "Content-Type": "text/html;charset=UTF-8"
     }
 });
+
 }
