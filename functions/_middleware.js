@@ -18,7 +18,7 @@ export async function onRequest(context) {
         status: 302,
         headers: {
             "Location": "/",
-            "Set-Cookie": "lr_session=authenticated; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800"
+            "Set-Cookie": "lr_session=authenticated; HttpOnly; Secure; SameSite=Lax; Path=/;"
         }
     });
 
