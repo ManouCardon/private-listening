@@ -4,13 +4,20 @@
     "title": "Jij",
     "file": "001.mp3",
     "duration": "",
-    "published": "2026-08-03"
+    "published": "2026-08-01"
   },
   {
     "id": 2,
     "title": "De trein",
     "file": "002.mp3",
     "duration": "",
-    "published": "2026-08-03"
+    "published": "2026-08-01"
+  },
+  {
+    "id": 3,
+    "title": "Geen idee wat ik hier dacht...",
+    "file": "003.mp3",
+    "duration": "",
+    "published": "2026-08-02"
   }
 ]
