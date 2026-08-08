@@ -111,11 +111,20 @@ function render(list) {
         groups.get(msg.date).push(msg);
     }
 
-    const dates = [...groups.keys()].sort((a, b) => b.localeCompare(a));
+    // De chat zelf: oud → nieuw
+    const dates = [...groups.keys()]
+        .sort((a, b) => a.localeCompare(b));
+
+    // -------------------------
+    // TIJDLIJN LINKS
+    // Nieuwste → oudste
+    // -------------------------
 
     let currentMonth = "";
 
-    for (const date of dates) {
+    const navDates = [...dates].reverse();
+
+    for (const date of navDates) {
 
         const month = formatMonth(date);
 
@@ -137,13 +146,23 @@ function render(list) {
         const dayLink = document.createElement("a");
 
         dayLink.className = "day-link";
-        dayLink.href = `#day-${date}`;
-        dayLink.textContent = new Intl.DateTimeFormat("nl-NL", {
-            weekday: "short",
-            day: "numeric"
-        }).format(new Date(date + "T12:00:00"));
+        dayLink.href = `#day-end-${date}`;
+
+        dayLink.textContent =
+            new Intl.DateTimeFormat("nl-NL", {
+                weekday: "short",
+                day: "numeric"
+            }).format(new Date(date + "T12:00:00"));
 
         dateNav.lastElementChild.appendChild(dayLink);
+    }
+
+    // -------------------------
+    // GESPREK
+    // Oudste → nieuwste
+    // -------------------------
+
+    for (const date of dates) {
 
         const day = document.createElement("section");
 
@@ -158,16 +177,32 @@ function render(list) {
             <div class="messages"></div>
         `;
 
-        const messagesContainer = day.querySelector(".messages");
+        const messagesContainer =
+            day.querySelector(".messages");
 
-        for (const msg of groups.get(date)) {
+        // Binnen iedere dag: oud → nieuw
+        const dayMessages =
+            groups.get(date).sort((a, b) => {
 
-            const row = document.createElement("article");
+                const first =
+                    `${a.date}T${a.time}`;
+
+                const second =
+                    `${b.date}T${b.time}`;
+
+                return first.localeCompare(second);
+            });
+
+        for (const msg of dayMessages) {
+
+            const row =
+                document.createElement("article");
 
             row.className =
                 `message-row ${msg.sender === me ? "mine" : ""}`;
 
-            const bubble = document.createElement("div");
+            const bubble =
+                document.createElement("div");
 
             bubble.className = "bubble";
 
@@ -190,16 +225,34 @@ function render(list) {
                 `<div class="meta">${escapeHTML(msg.time)}</div>`;
 
             bubble.innerHTML =
-                senderHTML + media + text + meta;
+                senderHTML +
+                media +
+                text +
+                meta;
 
             row.appendChild(bubble);
             messagesContainer.appendChild(row);
         }
 
+        const dayEnd = document.createElement("div");
+        dayEnd.id = `day-end-${date}`;
+        dayEnd.style.scrollMarginTop = "20px";
+
+        day.appendChild(dayEnd);
+
         timeline.appendChild(day);
     }
 
     observeDates();
+
+    // Openen zoals WhatsApp:
+    // automatisch naar het meest recente bericht.
+    requestAnimationFrame(() => {
+        window.scrollTo(
+            0,
+            document.documentElement.scrollHeight
+        );
+    });
 }
 
 function observeDates() {
@@ -257,15 +310,15 @@ async function init() {
 
     me = data.me || "";
 
-    messages.sort((a, b) => {
+   messages.sort((a, b) => {
 
-        const first =
-            `${a.date}T${a.time}`;
+    const first =
+        `${a.date}T${a.time}`;
 
-        const second =
-            `${b.date}T${b.time}`;
+    const second =
+        `${b.date}T${b.time}`;
 
-        return second.localeCompare(first);
+    return first.localeCompare(second);
     });
 
     render(messages);
