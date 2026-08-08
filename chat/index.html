@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gesprekken — Luisterruimte</title>
+
+    <link rel="stylesheet" href="chat.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <a class="back" href="/">← Luisterruimte</a>
+
+    <div class="topbar-title">
+        Gesprekken
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="date-nav" aria-label="Navigatie door de gesprekken">
+
+        <div class="nav-title">
+            Tijdlijn
+        </div>
+
+        <div id="dateNav"></div>
+
+    </aside>
+
+    <main id="timeline" class="timeline" aria-live="polite"></main>
+
+</div>
+
+<script src="chat.js"></script>
+
+</body>
+</html>
